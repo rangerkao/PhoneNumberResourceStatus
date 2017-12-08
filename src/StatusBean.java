@@ -1,4 +1,5 @@
 
+
 public class StatusBean {
 
 	String DATE;
@@ -11,6 +12,9 @@ public class StatusBean {
 	
 	int TDY_USED_No;
 	int YesTDY_Accum;
+	
+	String TYPE;
+	
 	String Utilization;
 	
 	public String getDATE() {
@@ -73,6 +77,13 @@ public class StatusBean {
 	public void setTDY_USED_No(int tDY_USED_No) {
 		TDY_USED_No = tDY_USED_No;
 	}
+	public String getTYPE() {
+		return TYPE;
+	}
+	public void setTYPE(String tYPE) {
+		TYPE = tYPE;
+	}
+	
 	
 	
 	

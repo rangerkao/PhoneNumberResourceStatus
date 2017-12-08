@@ -1,3 +1,5 @@
+
+
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -53,7 +55,7 @@ public class PhoneNumberResourceStatus {
 			
 			String sql = ""
 					+ "select to_char(B.statusdate,'yyyy/MM/dd') d,A.RANGENAME NUM_LVL,B.LOCKED_No,"
-					+ "			B.IDLE_No,B.Spared_No,B. Accum_USED_No,B.Ported_out_No,C.Accum_USED_No YesTDY_Accum "
+					+ "			B.IDLE_No,B.Spared_No,B. Accum_USED_No,B.Ported_out_No,C.Accum_USED_No YesTDY_Accum,A.TYPE "
 					+ "from NUMBERRANGE A,"
 					+ "		(select rangeID,statusdate,LOCKED_No,IDLE_No,Spared_No,Accum_USED_No,Ported_out_No "
 					+ "		from NUMBERSTATUS "
@@ -67,14 +69,23 @@ public class PhoneNumberResourceStatus {
 			
 			System.out.println("Execute SQL:"+sql);
 			rs = st.executeQuery(sql);
+			//實體門號
 			int LOCKED_No = 0;
 			int IDLE_No = 0;
 			int Spared_No = 0;
 			int Accum_USED_No = 0;
-			int Ported_out_No = 0;
-			
+			int Ported_out_No = 0;		
 			int TDY_USED_No = 0;
 			int YesTDY_Accum = 0;
+			
+			//虛擬門號
+			int vLOCKED_No = 0;
+			int vIDLE_No = 0;
+			int vSpared_No = 0;
+			int vAccum_USED_No = 0;
+			int vPorted_out_No = 0;		
+			int vTDY_USED_No = 0;
+			int vYesTDY_Accum = 0;
 			
 			while(rs.next()){
 				StatusBean s = new StatusBean();
@@ -93,13 +104,29 @@ public class PhoneNumberResourceStatus {
 						).setScale(2, BigDecimal.ROUND_HALF_UP).toString()//小數點2位四捨五入
 						+"%");
 				
-				LOCKED_No += s.getLOCKED_No(); 
-				IDLE_No += s.getIDLE_No(); 
-				Spared_No += s.getSpared_No();
-				Accum_USED_No += s.getAccum_USED_No();
-				Ported_out_No += s.getPorted_out_No();
-				TDY_USED_No += s.getTDY_USED_No();
-				YesTDY_Accum += s.getYesTDY_Accum();
+				s.setTYPE(rs.getString("TYPE"));
+
+				//System.out.println(s.getTYPE());
+				
+				if("N".equalsIgnoreCase(s.getTYPE())) {
+					LOCKED_No += s.getLOCKED_No(); 
+					IDLE_No += s.getIDLE_No(); 
+					Spared_No += s.getSpared_No();
+					Accum_USED_No += s.getAccum_USED_No();
+					Ported_out_No += s.getPorted_out_No();
+					TDY_USED_No += s.getTDY_USED_No();
+					YesTDY_Accum += s.getYesTDY_Accum();
+				}else if("V".equalsIgnoreCase(s.getTYPE())) {
+					vLOCKED_No += s.getLOCKED_No(); 
+					vIDLE_No += s.getIDLE_No(); 
+					vSpared_No += s.getSpared_No();
+					vAccum_USED_No += s.getAccum_USED_No();
+					vPorted_out_No += s.getPorted_out_No();
+					vTDY_USED_No += s.getTDY_USED_No();
+					vYesTDY_Accum += s.getYesTDY_Accum();
+				}
+				
+				
 				
 				list.add(s);
 			}
@@ -108,6 +135,7 @@ public class PhoneNumberResourceStatus {
 				result.put("error", "No data.");
 			}
 			else{
+				//實體門號
 				StatusBean s = new StatusBean();
 				s.setDATE(list.get(0).getDATE());
 				s.setNUM_LVL("ALL");
@@ -122,7 +150,25 @@ public class PhoneNumberResourceStatus {
 						(Double.parseDouble(String.valueOf(s.getAccum_USED_No()))/(s.getLOCKED_No()+s.getIDLE_No()+s.getSpared_No()+s.getAccum_USED_No())*100)
 						).setScale(2, BigDecimal.ROUND_HALF_UP).toString()//小數點2位四捨五入
 						+"%");
+				s.setTYPE("N");
+				list.add(s);
 				
+				//虛擬門號
+				s = new StatusBean();
+				s.setDATE(list.get(0).getDATE());
+				s.setNUM_LVL("ALL");
+				s.setLOCKED_No(vLOCKED_No);
+				s.setIDLE_No(vIDLE_No);
+				s.setSpared_No(vSpared_No);
+				s.setAccum_USED_No(vAccum_USED_No);
+				s.setPorted_out_No(vPorted_out_No);
+				s.setTDY_USED_No(vTDY_USED_No);
+				s.setYesTDY_Accum(vYesTDY_Accum);
+				s.setUtilization(new BigDecimal(
+						(Double.parseDouble(String.valueOf(s.getAccum_USED_No()))/(s.getLOCKED_No()+s.getIDLE_No()+s.getSpared_No()+s.getAccum_USED_No())*100)
+						).setScale(2, BigDecimal.ROUND_HALF_UP).toString()//小數點2位四捨五入
+						+"%");
+				s.setTYPE("V");
 				list.add(s);
 				result.put("data", list);
 			}			

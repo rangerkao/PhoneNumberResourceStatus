@@ -54,10 +54,24 @@
 		reset();
 		
 		
-		
+		$("#data2").css({"display": "none"});
+		$("#normal").css({"border": "2px solid red"});
 		//註冊動作
 		$("#reset").click(reset);
 		$("#submit").click(submit);
+		$("#normal").click(function(){
+			$("#data2").css({"display": "none"});
+			$("#data1").css({"display": ''});
+			$("#normal").css({"border": "2px solid red"});
+			$("#virtual").css({"border": ""});
+			
+		});
+		$("#virtual").click(function(){
+			$("#data1").css({"display": "none"});
+			$("#data2").css({"display": ''});
+			$("#normal").css({"border": ""});
+			$("#virtual").css({"border": "2px solid red"});
+		});
 		
 	})
 	
@@ -86,10 +100,17 @@
 					alert(data["error"]);
 				else{
 					//清除表格除標頭外資料
-					$("#data tr ").first().siblings().remove();
+					$("#data1 tr").first().siblings().remove();
+					$("#data2 tr").first().siblings().remove();
 					data["data"].forEach(function(value,index){
-						$("#data").append('<tr><td>'+value["DATE"]+'</td><td>'+value["NUM_LVL"]+'</td><td>'+value["LOCKED_No"]+'</td><td>'+value["IDLE_No"]+'</td><td>'+value["spared_No"]+'</td>'
-							+'<td style="background-color: 	#FF8888; ">'+value["accum_USED_No"]+'</td><td>'+value["ported_out_No"]+'</td><td>'+value["TDY_USED_No"]+'</td><td>'+value["yesTDY_Accum"]+'</td><td style="background-color: 	#FF8888; ">'+value["utilization"]+'</td></tr>');
+						if(value["TYPE"]==='N'){
+							$("#data1").append('<tr><td>'+value["DATE"]+'</td><td>'+value["NUM_LVL"]+'</td><td>'+value["LOCKED_No"]+'</td><td>'+value["IDLE_No"]+'</td><td>'+value["spared_No"]+'</td>'
+									+'<td style="background-color: 	#FF8888; ">'+value["accum_USED_No"]+'</td><td>'+value["ported_out_No"]+'</td><td>'+value["TDY_USED_No"]+'</td><td>'+value["yesTDY_Accum"]+'</td><td style="background-color: 	#FF8888; ">'+value["utilization"]+'</td></tr>');
+						}else if(value["TYPE"]==='V'){
+							$("#data2").append('<tr><td>'+value["DATE"]+'</td><td>'+value["NUM_LVL"]+'</td><td>'+value["LOCKED_No"]+'</td><td>'+value["IDLE_No"]+'</td><td>'+value["spared_No"]+'</td>'
+									+'<td style="background-color: 	#FF8888; ">'+value["accum_USED_No"]+'</td><td>'+value["ported_out_No"]+'</td><td>'+value["TDY_USED_No"]+'</td><td>'+value["yesTDY_Accum"]+'</td><td style="background-color: 	#FF8888; ">'+value["utilization"]+'</td></tr>');
+						}
+						
 						
 					});
 				}
@@ -144,16 +165,18 @@
 			Year:<select id="year"></select>
 			Month:<select id="month"></select>
 			Day:<select id="day"></select>
-		</div>
-		<div>
 			<input type="button" id= "submit" value="submit">
 			<input type="button" id="reset" value="reset">
 		</div>
 	</div>	
 </div>
+<div style="position:relative;left:5px;">
+	<input type="button" id="normal" value="normal number">\
+	<input type="button" id="virtual" value="virtual number">
+</div>
 <div style="padding: 10px;">
 	<div style="border-width: 3px;border-color: #333 #999 #999 #333;border-style: solid; ">
-		<table id="data">
+		<table id="data1">
 			<tr>
 				<th>DATE</th><th>NUM_LVL</th><th>LOCKED_No.</th><th>IDLE_No.	</th><th>Spared_No.</th>
 				<th style="background-color: #AAFFEE; ">Accum_USED_No.</th><th>Ported out No.</th><th>TDY_USED_No.</th><th>YesTDY_Accum.</th><th style="background-color: #AAFFEE; ">Utilization</th>
@@ -163,6 +186,16 @@
 				<td style="background-color: 	#FF8888; ">1937</td><td>0</td><td>0</td><td>1937</td><td style="background-color: 	#FF8888; ">19.37%</td>
 			</tr>	 -->
 		</table>	
+		<table id="data2">
+			<tr>
+				<th>DATE</th><th>NUM_LVL</th><th>LOCKED_No.</th><th>IDLE_No.	</th><th>Spared_No.</th>
+				<th style="background-color: #AAFFEE; ">Accum_USED_No.</th><th>Ported out No.</th><th>TDY_USED_No.</th><th>YesTDY_Accum.</th><th style="background-color: #AAFFEE; ">Utilization</th>
+			</tr>
+			<!-- <tr>
+				<td>2017/05/01</td><td>+8525221xxxx</td><td>0</td><td>63</td><td>8000</td>
+				<td style="background-color: 	#FF8888; ">1937</td><td>0</td><td>0</td><td>1937</td><td style="background-color: 	#FF8888; ">19.37%</td>
+			</tr>	 -->
+		</table>
 	</div>
 	<div id="logTime" style="height: 50px;border-top: black 1px solid;margin-top: 20px;color: pink;font-size: 20px;padding: 5px;">
 		
